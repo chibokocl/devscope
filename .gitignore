@@ -1,0 +1,85 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+*.pyd
+.Python
+
+# --- Virtual environments ---
+.venv/
+venv/
+env/
+ENV/
+
+# --- Build / dist ---
+build/
+dist/
+*.egg-info/
+*.egg
+MANIFEST
+.eggs/
+
+# --- uv ---
+# uv.lock is intentionally committed — do NOT ignore it
+.uv/
+
+# --- Testing & coverage ---
+.pytest_cache/
+pytest-cache-files-*/
+.coverage
+.coverage.*
+coverage.xml
+htmlcov/
+*.lcov
+
+# --- Type checking ---
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.pytype/
+
+# --- Ruff ---
+.ruff_cache/
+
+# --- IDEs ---
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# --- Office / binary docs ---
+*.docx
+*.xlsx
+*.pptx
+*.pdf
+
+# --- Secrets / local config ---
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+
+# --- devscope runtime data (user's ~/.devscope is separate; these are dev-time) ---
+.devscope/
+
+# --- Logs ---
+*.log
+logs/
+
+# --- Jupyter ---
+.ipynb_checkpoints/
+*.ipynb
+
+# --- Packaging ---
+pip-wheel-metadata/
+pip-log.txt
+pip-delete-this-directory.txt
+
+# --- Docs build ---
+docs/_build/
+site/
