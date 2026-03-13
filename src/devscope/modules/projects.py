@@ -267,12 +267,21 @@ def projects_status(name: str = typer.Argument(..., help="Project name to inspec
 @app.command("auto-detect")
 def projects_auto_detect(
     yes: bool = typer.Option(False, "--yes", "-y", help="Add all detected projects without prompting."),
+    paths: list[str] = typer.Option([], "--path", "-p", help="Extra directories to scan (repeatable)."),
 ) -> None:
     """Scan the filesystem for projects and suggest additions to the registry."""
-    console.print(f"[{STATUS_DIM}]Scanning: {', '.join(str(p) for p in DEFAULT_SCAN_PATHS)}[/]\n")
+    from pathlib import Path as _Path
+
+    scan_paths = list(DEFAULT_SCAN_PATHS)
+    for p in paths:
+        extra = _Path(p).expanduser()
+        if extra not in scan_paths:
+            scan_paths.append(extra)
+
+    console.print(f"[{STATUS_DIM}]Scanning: {', '.join(str(p) for p in scan_paths)}[/]\n")
 
     with console.status("[bold cyan]Discovering projects…[/]", spinner="dots"):
-        candidates = discover_projects()
+        candidates = discover_projects(scan_paths)
 
     registry = load_projects()
     new_candidates = {k: v for k, v in candidates.items() if k not in registry.projects}
@@ -288,14 +297,20 @@ def projects_auto_detect(
     t.add_column("Ports")
     t.add_column("DBs")
     t.add_column("Containers")
+    t.add_column("Tags")
 
     for name, proj in sorted(new_candidates.items()):
+        # Show type tag first, then pair tags, dim the rest
+        type_tags = [tg for tg in proj.tags if not tg.startswith("pair:")]
+        pair_tags = [tg for tg in proj.tags if tg.startswith("pair:")]
+        tags_display = ", ".join(type_tags + pair_tags) or "—"
         t.add_row(
             name,
             proj.path,
             ", ".join(str(p) for p in proj.ports) or "—",
             ", ".join(d.name for d in proj.databases) or "—",
             ", ".join(proj.docker_containers) or "—",
+            f"[{STATUS_DIM}]{tags_display}[/]",
         )
 
     console.print(Panel(t, title=f"DETECTED PROJECTS  ({len(new_candidates)} new)", border_style=PANEL_BORDER))
